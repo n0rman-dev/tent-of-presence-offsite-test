@@ -30,6 +30,12 @@ $method = $_SERVER['REQUEST_METHOD'];
 $uri    = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 $uri    = rtrim($uri, '/');
 
+$taskId = null;
+// Pattern matching for /api/tasks/:id
+if (preg_match('#^/api/tasks/([a-f0-9\-]+)$#', $uri, $matches)) {
+    $taskId = $matches[1];
+}
+
 $db         = Database::getInstance()->getConnection();
 $auth       = new AuthController($db);
 $middleware = new AuthMiddleware();
@@ -46,6 +52,10 @@ try {
         // ── Task Routes (Protected) ─────────────────
         $method === 'GET'  && $uri === '/api/tasks' => $tasks->index($middleware->handle()),
         $method === 'POST' && $uri === '/api/tasks' => $tasks->store($middleware->handle()),
+
+        $method === 'GET' && $taskId    => $tasks->show($middleware->handle(), $taskId),
+        $method === 'PATCH' && $taskId  => $tasks->update($middleware->handle(), $taskId),
+        $method === 'DELETE' && $taskId => $tasks->destroy($middleware->handle(), $taskId),
 
 
         // ── Fallback ────────────────────────────────

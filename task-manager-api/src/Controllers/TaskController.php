@@ -103,7 +103,74 @@ class TaskController
         ]);
     }
 
-    // ── Helpers ─────────────────────────────────────────────
+    // ── GET /api/tasks/:id ─────────────────────────────────
+    public function show(string $userId, string $taskId): never
+    {
+        $task = $this->taskModel->findById($taskId);
+
+        if (!$task || $task['user_id'] !== $userId) {
+            respond(404, ['message' => 'Task not found.']);
+        }
+
+        respond(200, [
+            'message' => 'Task retrieved successfully.',
+            'data'    => $task
+        ]);
+    }
+
+    // ── PATCH /api/tasks/:id ──────────────────────────────
+    public function update(string $userId, string $taskId): never
+    {
+        $task = $this->taskModel->findById($taskId);
+
+        if (!$task || $task['user_id'] !== $userId) {
+            respond(404, ['message' => 'Task not found.']);
+        }
+
+        $body = $this->parseBody();
+
+        $fields = [];
+        $allowed = ['title', 'description', 'status', 'priority', 'due_date'];
+
+        foreach ($allowed as $field) {
+            if (isset($body[$field])) {
+                $fields[$field] = $body[$field];
+            }
+        }
+
+        if (isset($fields['status']) && !in_array($fields['status'], ['todo', 'in_progress', 'done'], true)) {
+            respond(422, ['message' => 'Invalid status value.']);
+        }
+
+        if (isset($fields['priority']) && !in_array($fields['priority'], ['low', 'medium', 'high'], true)) {
+            respond(422, ['message' => 'Invalid status value.']);
+        }
+
+        $this->taskModel->update($taskId, $fields);
+
+        $updatedTask = $this->taskModel->findById($taskId);
+
+        respond(200, [
+            'message' => 'Task updated successfully.',
+            'data'    => $updatedTask
+        ]);
+    }
+
+    // ── DELETE /api/tasks/:id ──────────────────────────────
+    public function destroy(string $userId, string $taskId): never
+    {
+        $task = $this->taskModel->findById($taskId);
+
+        if (!$task || $task['user_id'] !== $userId) {
+            respond(404, ['message' => 'Task not found.']);
+        }
+
+        $this->taskModel->delete($taskId);
+
+        respond(200, ['message' => 'Task deleted successfully.']);
+    }
+
+    // ── Helpers ───────────────────────────────────────────
     private function parseBody(): array
     {
         $body = json_decode(file_get_contents('php://input'), true);

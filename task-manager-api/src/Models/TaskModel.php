@@ -107,4 +107,27 @@ class TaskModel
 
         return $task ?: null;
     }
+
+    // Update a task
+    public function update(string $taskId, array $fields): void
+    {
+        $set = [];
+        $params = ['id' => $taskId];
+
+        foreach ($fields as $key => $value) {
+            $set[] = "$key = :$key";
+            $params[$key] = $value;
+        }
+
+        $sql = "UPDATE tasks SET " . implode(', ', $set) . " WHERE id = :id";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute($params);
+    }
+
+    // Delete a task
+    public function delete(string $taskId): void
+    {
+        $stmt = $this->db->prepare("DELETE FROM tasks WHERE id = :id");
+        $stmt->execute(['id' => $taskId]);
+    }
 }
