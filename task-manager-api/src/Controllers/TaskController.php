@@ -63,7 +63,7 @@ class TaskController
         $description    = trim($body['description'] ?? '');
         $status         = $body['status'] ?? 'todo';
         $priority       = $body['priority'] ?? 'low';
-        $due_date       = $body['due_date'] ?? null;
+        $due_date       = !empty($body['due_date']) ? $body['due_date'] : null;
 
         $errors = [];
 

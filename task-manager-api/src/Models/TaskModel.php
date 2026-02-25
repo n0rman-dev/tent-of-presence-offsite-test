@@ -77,7 +77,7 @@ class TaskModel
         string $description,
         string $status,
         string $priority,
-        string $due_date
+        ?string $due_date
     ): string {
         $stmt = $this->db->prepare("
             INSERT INTO tasks (user_id, title, description, status, priority, due_date, created_at)
