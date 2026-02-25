@@ -192,7 +192,6 @@ export default function TasksPage() {
                             Status
                         </label>
                         <select
-                            style={{ padding: '0.5rem', width: '100%' }}
                             value={statusFilter}
                             onChange={e => setStatusFilter(e.target.value)}
                         >
@@ -208,7 +207,6 @@ export default function TasksPage() {
                             Priority
                         </label>
                         <select
-                            style={{ padding: '0.5rem', width: '100%' }}
                             value={priorityFilter}
                             onChange={e => setPriorityFilter(e.target.value)}
                         >
@@ -226,7 +224,7 @@ export default function TasksPage() {
                         <tr>
                             <th>Done</th>
                             <th>Title</th>
-                            <th style={{ width: '50%' }}>Description</th>
+                            <th style={{ width: '100vw' }}>Description</th>
                             <th>Status</th>
                             <th>Priority</th>
                             <th>Due Date</th>
