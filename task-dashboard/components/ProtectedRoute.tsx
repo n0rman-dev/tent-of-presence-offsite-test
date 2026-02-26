@@ -1,12 +1,12 @@
 // components/ProtectedRoute.tsx
-import { useEffect, useState } from 'react';
+import { useEffect, useState, ReactNode } from 'react';
 import { useRouter } from 'next/router';
 import api from '@/utils/api'; // adjust path if needed
 
 export default function ProtectedRoute({
   children,
 }: {
-  children: JSX.Element;
+  children: ReactNode;
 }) {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
