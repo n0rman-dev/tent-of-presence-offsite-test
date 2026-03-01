@@ -4,6 +4,10 @@
 
 Make sure you have these installed:
 - PHP 8.1+
+  - Required extensions:
+    - pdo
+    - pdo_mysql
+    - mysqli
 - Composer
 - Node.js 20+
 - npm
@@ -18,6 +22,13 @@ node --version
 npm --version
 mysql --version
 ```
+
+### PHP MySQL Extension (Linux)
+
+If you're using Ubuntu/Debian, install the MySQL extension for PHP:
+
+```bash
+sudo apt install php-mysql
 
 ---
 
