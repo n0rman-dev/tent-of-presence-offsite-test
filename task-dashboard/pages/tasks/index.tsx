@@ -219,150 +219,161 @@ export default function TasksPage() {
                 </div>
 
                 <h2>All Tasks</h2>
-                <table id='task-table' style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'center', display: 'block', overflowY: 'auto'  }}>
-                    <thead>
-                        <tr>
-                            <th>Done</th>
-                            <th>Title</th>
-                            <th style={{ width: '100vw' }}>Description</th>
-                            <th>Status</th>
-                            <th>Priority</th>
-                            <th>Due Date</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {filteredTasks.map(task => {
-                            const isEditing = editingTaskId === task.id;
-                            return (
-                                <tr key={task.id} style={{ borderBottom: '1px solid #ccc' }}>
-                                    <td>
-                                        <input
-                                            type="checkbox"
-                                            checked={task.status === 'done'}
-                                            onChange={async () => {
-                                                try {
-                                                    const res = await api.patch(`/api/tasks/${task.id}`, {
-                                                        status: task.status === 'done' ? 'todo' : 'done',
-                                                    });
-                                                    setTasks(prev => prev.map(t => (t.id === task.id ? res.data.data : t)));
-                                                } catch (err: any) {
-                                                    alert(err.response?.data?.message || 'Failed to update task.');
-                                                }
-                                            }}
-                                        />
-                                    </td>
-                                    {isEditing ? (
-                                        <>
-                                            <td>
-                                                <input
-                                                    type="text"
-                                                    value={editingTaskData.title ?? task.title}
-                                                    onChange={e => setEditingTaskData(prev => ({ ...prev, title: e.target.value }))}
-                                                />
-                                            </td>
-                                            <td>
-                                                <textarea
-                                                    rows={3}
-                                                    style={{ width: '100%', padding: '0.5rem' }}
-                                                    value={editingTaskData.description ?? task.description}
-                                                    onChange={e =>
-                                                        setEditingTaskData(prev => ({
-                                                            ...prev,
-                                                            description: e.target.value,
-                                                        }))
+                <div style={{ width: "100%", overflowX: "auto" }}>
+                    <table
+                        id="task-table"
+                        style={{
+                            width: "100%",
+                            borderCollapse: "collapse",
+                            textAlign: "center",
+                            minWidth: "700px", // prevents squishing on mobile
+                        }}
+                    >
+
+                        <thead>
+                            <tr>
+                                <th>Done</th>
+                                <th>Title</th>
+                                <th>Description</th>
+                                <th>Status</th>
+                                <th>Priority</th>
+                                <th>Due Date</th>
+                                <th style={{ textAlign: 'Right' }}>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {filteredTasks.map(task => {
+                                const isEditing = editingTaskId === task.id;
+                                return (
+                                    <tr key={task.id} style={{ borderBottom: '1px solid #ccc' }}>
+                                        <td>
+                                            <input
+                                                type="checkbox"
+                                                checked={task.status === 'done'}
+                                                onChange={async () => {
+                                                    try {
+                                                        const res = await api.patch(`/api/tasks/${task.id}`, {
+                                                            status: task.status === 'done' ? 'todo' : 'done',
+                                                        });
+                                                        setTasks(prev => prev.map(t => (t.id === task.id ? res.data.data : t)));
+                                                    } catch (err: any) {
+                                                        alert(err.response?.data?.message || 'Failed to update task.');
                                                     }
-                                                />
-                                            </td>
-                                            <td>
-                                                <select
-                                                    value={editingTaskData.status ?? task.status}
-                                                    onChange={e =>
-                                                        setEditingTaskData(prev => ({ ...prev, status: e.target.value }))
-                                                    }
-                                                >
-                                                    <option value="todo">To Do</option>
-                                                    <option value="in_progress">In Progress</option>
-                                                    <option value="done">Done</option>
-                                                </select>
-                                            </td>
-                                            <td>
-                                                <select
-                                                    value={editingTaskData.priority ?? task.priority}
-                                                    onChange={e =>
-                                                        setEditingTaskData(prev => ({ ...prev, priority: e.target.value }))
-                                                    }
-                                                >
-                                                    <option value="low">Low</option>
-                                                    <option value="medium">Medium</option>
-                                                    <option value="high">High</option>
-                                                </select>
-                                            </td>
-                                            <td>
-                                                <input
-                                                    type="date"
-                                                    value={formatDueDateForInputValue(editingTaskData.due_date ?? task.due_date ?? '')}
-                                                    onChange={e =>
-                                                        setEditingTaskData(prev => ({ ...prev, due_date: e.target.value }))
-                                                    }
-                                                />
-                                            </td>
-                                            <td>
-                                                <div className="task-actions">
-                                                <button
-                                                    onClick={async () => {
-                                                        try {
-                                                            const res = await api.patch(`/api/tasks/${task.id}`, editingTaskData);
-                                                            setTasks(prev =>
-                                                                prev.map(t => (t.id === task.id ? res.data.data : t))
-                                                            );
-                                                            setEditingTaskId(null);
-                                                            setEditingTaskData({});
-                                                        } catch (err: any) {
-                                                            alert(err.response?.data?.message || 'Failed to save task.');
+                                                }}
+                                            />
+                                        </td>
+                                        {isEditing ? (
+                                            <>
+                                                <td>
+                                                    <input
+                                                        type="text"
+                                                        value={editingTaskData.title ?? task.title}
+                                                        onChange={e => setEditingTaskData(prev => ({ ...prev, title: e.target.value }))}
+                                                    />
+                                                </td>
+                                                <td>
+                                                    <textarea
+                                                        rows={3}
+                                                        style={{ width: '100%', padding: '0.5rem' }}
+                                                        value={editingTaskData.description ?? task.description}
+                                                        onChange={e =>
+                                                            setEditingTaskData(prev => ({
+                                                                ...prev,
+                                                                description: e.target.value,
+                                                            }))
                                                         }
-                                                    }}
-                                                >
-                                                    Save
-                                                </button>
-                                                <button
-                                                    onClick={() => {
-                                                        setEditingTaskId(null);
-                                                        setEditingTaskData({});
-                                                    }}
-                                                >
-                                                    Cancel
-                                                </button>
-                                                </div>
-                                            </td>
-                                        </>
-                                    ) : (
-                                        <>
-                                            <td>{task.title}</td>
-                                            <td style={{ whiteSpace: 'pre-wrap' }}>{task.description}</td>
-                                            <td>{formatStatus(task.status)}</td>
-                                            <td>{formatPriority(task.priority)}</td>
-                                            <td>{formatDueDate(task.due_date)}</td>
-                                            <td>
-                                                <div className="task-actions">
-                                                <button
-                                                    onClick={() => {
-                                                        setEditingTaskId(task.id);
-                                                        setEditingTaskData({ ...task });
-                                                    }}
-                                                >
-                                                    Edit
-                                                </button>
-                                                <button onClick={() => handleDelete(task.id)}>Delete</button>
-                                                </div>
-                                            </td>
-                                        </>
-                                    )}
-                                </tr>
-                            );
-                        })}
-                    </tbody>
-                </table>
+                                                    />
+                                                </td>
+                                                <td>
+                                                    <select
+                                                        value={editingTaskData.status ?? task.status}
+                                                        onChange={e =>
+                                                            setEditingTaskData(prev => ({ ...prev, status: e.target.value }))
+                                                        }
+                                                    >
+                                                        <option value="todo">To Do</option>
+                                                        <option value="in_progress">In Progress</option>
+                                                        <option value="done">Done</option>
+                                                    </select>
+                                                </td>
+                                                <td>
+                                                    <select
+                                                        value={editingTaskData.priority ?? task.priority}
+                                                        onChange={e =>
+                                                            setEditingTaskData(prev => ({ ...prev, priority: e.target.value }))
+                                                        }
+                                                    >
+                                                        <option value="low">Low</option>
+                                                        <option value="medium">Medium</option>
+                                                        <option value="high">High</option>
+                                                    </select>
+                                                </td>
+                                                <td>
+                                                    <input
+                                                        type="date"
+                                                        value={formatDueDateForInputValue(editingTaskData.due_date ?? task.due_date ?? '')}
+                                                        onChange={e =>
+                                                            setEditingTaskData(prev => ({ ...prev, due_date: e.target.value }))
+                                                        }
+                                                    />
+                                                </td>
+                                                <td>
+                                                    <div className="task-actions">
+                                                        <button
+                                                            onClick={async () => {
+                                                                try {
+                                                                    const res = await api.patch(`/api/tasks/${task.id}`, editingTaskData);
+                                                                    setTasks(prev =>
+                                                                        prev.map(t => (t.id === task.id ? res.data.data : t))
+                                                                    );
+                                                                    setEditingTaskId(null);
+                                                                    setEditingTaskData({});
+                                                                } catch (err: any) {
+                                                                    alert(err.response?.data?.message || 'Failed to save task.');
+                                                                }
+                                                            }}
+                                                        >
+                                                            Save
+                                                        </button>
+                                                        <button
+                                                            onClick={() => {
+                                                                setEditingTaskId(null);
+                                                                setEditingTaskData({});
+                                                            }}
+                                                        >
+                                                            Cancel
+                                                        </button>
+                                                    </div>
+                                                </td>
+                                            </>
+                                        ) : (
+                                            <>
+                                                <td>{task.title}</td>
+                                                <td style={{ whiteSpace: 'pre-wrap' }}>{task.description}</td>
+                                                <td>{formatStatus(task.status)}</td>
+                                                <td>{formatPriority(task.priority)}</td>
+                                                <td>{formatDueDate(task.due_date)}</td>
+                                                <td>
+                                                    <div className="task-actions">
+                                                        <button
+                                                            onClick={() => {
+                                                                setEditingTaskId(task.id);
+                                                                setEditingTaskData({ ...task });
+                                                            }}
+                                                        >
+                                                            Edit
+                                                        </button>
+                                                        <button onClick={() => handleDelete(task.id)}>Delete</button>
+                                                    </div>
+                                                </td>
+                                            </>
+                                        )}
+                                    </tr>
+                                );
+                            })}
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </ProtectedRoute>
     );

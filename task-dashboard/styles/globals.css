@@ -61,9 +61,5 @@ select {
 #task-table tbody td:last-child .task-actions {
   display: flex;
   gap: 0.5rem;
-  justify-content: center;
-}
-
-#task-table td {
-  padding: 0 15px;
+  justify-content: end;
 }
