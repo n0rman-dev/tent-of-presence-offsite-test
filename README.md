@@ -29,6 +29,7 @@ If you're using Ubuntu/Debian, install the MySQL extension for PHP:
 
 ```bash
 sudo apt install php-mysql
+```
 
 ---
 
